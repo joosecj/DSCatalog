@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,7 +54,7 @@ public class ProductService {
     @Transactional
     public ProductDTO update(Long id, ProductDTO dto) {
         try {
-            Product entity = repository.getOne(id);
+            Product entity = repository.getReferenceById(id);
             copyDtoToEntity(dto, entity);
             entity = repository.save(entity);
             return new ProductDTO(entity);
@@ -75,7 +74,6 @@ public class ProductService {
     }
 
     private void copyDtoToEntity(ProductDTO dto, Product entity) {
-
         entity.setName(dto.getName());
         entity.setDescription(dto.getDescription());
         entity.setDate(dto.getDate());
@@ -84,7 +82,7 @@ public class ProductService {
 
         entity.getCategories().clear();
         for (CategoryDTO catDto : dto.getCategories()) {
-            Category category = categoryRepository.getOne(catDto.getId());
+            Category category = categoryRepository.getReferenceById(catDto.getId());
             entity.getCategories().add(category);
         }
     }
